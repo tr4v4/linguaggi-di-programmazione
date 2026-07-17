@@ -1,0 +1,66 @@
+---
+tags:
+  - category/note
+  - status/finished
+  - topic/programmazione
+  - topic/linguaggi-di-programmazione
+date: 09-10-2023 17:50:42
+links:
+  - "[[lecture-09102023151504|Lecture 09102023151504]]"
+  - "[[lecture-10102023093258|Lecture 10102023093258]]"
+  - "[[lecture-20022025131602|Lecture 20022025131602]]"
+---
+# Scope
+---
+## Introduzione
+> La **portata di una [[dichiarazione|dichiarazione]]**, anche detta **scope** definisce per quale _[[blocco|blocco]]_ di codice vale un certo [[identificatore|identificatore]].
+> E' necessaria per disambiguare _quei casi in cui all'interno di un blocco uso un nome non appartenente all'ambiente locale_: lo prendo per forza dall'ambiente non-locale? Dipende da che scope uso!
+
+In generale si dice che una dichiarazione vale solo e solamente per il blocco a cui appartiene: al di fuori di esso l'identificatore non è raggiungibile[^1].
+
+Per esempio, considerando il seguente blocco di codice
+```cpp
+int x = 1;
+{ int y = 2; }
+cout << x << y;
+```
+questo genererebbe errore perché dopo l'esecuzione del blocco `{ int y = 2; }`, l'identificatore `y` non esiste più in [[ram|memoria]].
+
+<u>Osservazione</u>: in un blocco è possibile dichiarare nuovi identificatori, o addirittura _ridichiararne di vecchi_!
+
+## Casistiche
+Nel caso delle [[funzione-informatica|funzioni]] bisogna agire allo stesso modo: considerare per ogni blocco l'identificatore che si trova più vicino. Se il riferimento è dentro il proprio blocco allora verrà preso in considerazione quello; altrimenti il blocco "cercherà" l'identificatore al di fuori, arrivando eventualmente alle _variabili globali_.
+
+Es.
+```cpp
+int m;
+int n;
+void min() {
+	int tmp;
+	if (m > n) {tmp = m; m = n; n = tmp;}
+}
+int main() {
+	cin >> m >> n;
+	{
+		int m = 7;
+		min();
+		cout << m << n;
+	}
+	return 0;
+}
+```
+Il risultato di questo codice è `710`. Questo perché `min()` non vede la variabile locale del blocco di `main`, quindi per le regole della portata dei dati va a prendere il valore di `m` e `n` subito fuori dal suo blocco.
+
+## Regole
+Ci sono 2 regole di scope principali:
+- [[scope-statico|scope statico]]
+- [[scope-dinamico|scope dinamico]]
+
+Una differenza sostanziale tra i due scope, e' che _se cambio il nome di una variabile locale in tutte le occorrenze_:
+- nello scope statico non cambia nulla;
+- nello scope dinamico cambia tutto.
+
+![[scope-statico-vs-scope-dinamico.png]]
+
+## Referenze
+[^1]: funziona un po' come le regole grammaticali: dopo il punto il soggetto perde la sua valenza per la frase successiva
