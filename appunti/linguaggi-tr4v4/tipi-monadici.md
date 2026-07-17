@@ -1,0 +1,27 @@
+---
+tags:
+  - category/note
+  - status/finished
+  - topic/linguaggi-di-programmazione
+date: 28-09-2025 20:24:06
+links:
+  - "[[lecture-23042025111218|Lecture 23042025111218]]"
+---
+# Tipi monadici
+---
+## Introduzione
+### Tipo opzione
+E' utile per gestire in maniera strutturata [[puntatore|puntatori]] nulli (abitante `null`).
+Mescolano [[generics|tipi parametrici]] con [[tipo-somma|tipi somma]]:
+```rust
+type Maybe<T>: Some<T> + None
+```
+
+### Tipo risultato
+E' un raffinamento dei tipi opzione, dove usiamo i tipi polimorfi e somma per distinguere tra il risultato di un calcolo e un'esecuzione errata.
+```rust
+type Result<T, E> : Ok<T> + Err<E>
+```
+E' un'alternativa alla gestione delle [[eccezione|eccezioni]].
+
+## Referenze

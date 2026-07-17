@@ -1,0 +1,105 @@
+---
+tags:
+  - category/note
+  - status/finished
+  - topic/ingegneria-del-software
+  - topic/linguaggi-di-programmazione
+date: 22-09-2025 14:07:54
+links:
+  - "[[lecture-22092025100902|Lecture 22092025100902]]"
+  - "[[lecture-23042025111218|Lecture 23042025111218]]"
+  - "[[lecture-14052025105842|Lecture 14052025105842]]"
+---
+# Sottotipaggio
+---
+## Introduzione
+L'overriding nasce dalla necessità dei programmatori di **determinare il comportamento degli oggetti il più tardi possibile**, se possibile addirittura a run-time.
+
+Questo è in linea con le metodologie "agili": _le specifiche del cliente si definiscono iterazione dopo iterazione_[^1]. Per questa ragione le funzioni virtuali sono un modello elegante e flessibile per gestire il cambiamento delle specifiche del cliente.
+
+Data la sua vicinanza al concetto di [[ereditarieta|ereditarieta']][^4], di solito si usa molto nei [[linguaggio-di-programmazione-orientato-a-oggetti|linguaggi orientati agli oggetti]].
+
+## Definizione
+> Una **funzione virtuale** è un metodo di una classe che può essere _ridefinito in una classe derivata_. Tale ridefinizione è chiamata **overriding**, o **[[polimorfismo|polimorfismo]] di sottotipo**.
+> Si basa sulla [[relazione|relazione]] binaria $<:$, tale per cui $S <: T$ significa "$S$ sottotipo di $T$" o "$S$ specifica $T$". Infatti $S$ e' un tipo piu' specifico di $T$ e possiamo quindi usare $S$ in qualsiasi posto che necessiti $T$[^3].
+
+Un tipico esempio e' il tipo `Animale` e i suoi sottotipi `Gatto` e `Cane`. Possiamo usare tipi `Gatto` e `Cane` qualora ci fosse bisogno di un `Animale`.
+
+### Relazione $<:$
+Di solito $<:$ e' un **preordine**, ossia e' [[riflessivita-di-una-relazione|riflessivo]] e [[transitivita-di-una-relazione|transitivo]], ma non [[simmetria-di-una-relazione|simmetrico]]. Anzi, e' spesso [[antisimmetricita-di-una-relazione|antisimmetrico]], e quindi un **preordine parziale**! Ossia $S <: T \land T <: S \implies S = T$. Proprio per questo dove e' necessario `Gatto` non possiamo metterci `Animale` (perche' `Gatto` e' piu' specifico).
+
+La relazione di sottotipaggio assume la forma di un [[dag|DAG]], per via dell'antisimmetria. Questa relazione non garantisce un elemento `Top` che fa da supertipo per tutti i sottotipi e che non ha un supertipo: _ma sarebbe molto utile averlo_! In [[java|Java]], per esempio, questo `Top` esiste e si chiama `Object`.
+
+Trattandosi di DAG, c'e' la possibilita' di formare i cosiddetti [[tipo-intersezione|tipi intersezione]].
+
+### Condizioni
+L'overriding avviene se:
+- il metodo sovrascritto è _virtuale_ (di solito lo sono di base se non diversamente specificato);
+- il metodo nuovo ha la _stessa firma_ e lo _stesso tipo di ritorno_ del metodo.
+
+<u>Nota bene</u>: si sa solo a run-time quale metodo verrà eseguito!
+
+<u>Nota bene</u>: i metodi statici non possono essere sovrascritti.
+
+## Fenomeni
+Il polimorfismo di sottotipo puo' essere letto in **larghezza** o in **profondita'**.
+
+### Sottotipaggio in larghezza
+Per sottotipaggio in larghezza si intende il caso in cui _i record dei sottotipi aggiungono piu' campi dei loro supertipi_.
+
+Immaginiamo i seguenti [[tipo-prodotto-record|record]]:
+```rust
+type Animal: {
+	name: string
+}
+type Dog: {
+	name: string,
+	bark: string
+}
+```
+
+Allora `Dog` $<:$ `Animal`, e il sottotipaggio e' in larghezza: aggiunge un nuovo campo `bark`.
+
+### Sottotipaggio in profondita'
+Per sottotipaggio in profondita' si intende il caso in cui _avviene una sostituzione dei tipi dei campi del sottotipo_.
+
+Immaginiamo i seguenti record:
+```rust
+type AnimalHouse: {
+	tenant: Animal
+}
+type DogHouse: {
+	tenant: Dog
+}
+```
+
+Allora `DogHouse` $<:$ `AnimalHouse` in profondita', ovviamente perche' `Dog` $<:$ `Animal`!
+
+### Relazione
+La relazione tra sottotipaggio in larghezza e in profondita' e' studiato nella [[covarianza-e-controvarianza|covarianza e controvarianza]]. L'atto di decidere se $S <: T$ si chiama [[sussunzione|sussunzione]].
+
+## Soluzioni
+Per implementare a questo punto una funzione generica `max` tale che sia la piu' generica possibile, possiamo scrivere:
+```rust
+Integer <: Float
+max( Float i, Float j ) -> Float { … }
+```
+
+Il problema di questa soluzione e' che all'interno di `max` perdiamo informazioni sui sottotipi, aka `Integer`, e soprattutto restituiamo solo `Float` (valore del super-tipo), e non quello specifico chiamato (per esempio `Integer`). Bisogna forzare il [[casting-di-tipo|casting]]!
+
+Possiamo allora fare:
+```rust
+Integer <: Comparable
+Float <: Comparable
+max( Comparable i, Comparable j ) -> Comparable { … }
+```
+
+Qui perdiamo ancora di piu', e si pone lo stesso problema del casting forzato.
+
+## Referenze
+- [[classe-tipaggio|Classe#Tipaggio]]
+
+[^1]: la comprensione è incrementale...
+[^2]: in realtà anche in Java si usano i puntatori
+[^3]: [[principio-di-sostituzione-di-liskov|principio di sostituzione di Liskov]]
+[^4]: non e' la stessa cosa, ma una sua raffinazione!
