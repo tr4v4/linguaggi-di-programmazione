@@ -1,0 +1,27 @@
+---
+tags:
+  - category/note
+  - status/finished
+  - topic/programmazione
+  - topic/linguaggi-di-programmazione
+date: 05-11-2023 19:17:42
+links:
+  - "[[lecture-03112023110813|Lecture 03112023110813]]"
+  - "[[lecture-20022025131602|Lecture 20022025131602]]"
+---
+# Allocazione dinamica della memoria dei programmi
+---
+## Introduzione
+> Per **allocazione dinamica della memoria dei programmi** si intende il meccanismo di allocazione della [[memorie|memoria]] per il quale questa viene allocata a _run-time_.
+
+In modo particolare, comprende [[stack|stack]] e [[heap|heap]].
+Ricordiamo, infatti che la [[ram|RAM]] alloca a ogni [[processo|processo]] in esecuzione un certo spazio diviso in 4 principali sezioni:
+- _stack_
+- _heap_
+- _data_
+- _text_/_code_
+
+come in figura
+![[memory-layout-c-program.png]]
+
+## Referenze
